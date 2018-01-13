@@ -8,7 +8,7 @@ const styles = {
   margin: 10
 };
 
-const TestComponent = () => (
+const Message = () => (
   <div>
     <h1>Test Title</h1>
     <p>Text Content</p>
@@ -19,40 +19,44 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      testComponentVisible: false
+      items: [1, 2, 3, 4],
+      showMessage: false
     };
 
-    this.handleClick = () => {
+    this.toggleMessage = () => {
       this.setState({
-        testComponentVisible: !this.state.testComponentVisible
+        showMessage: !this.state.showMessage
       });
     };
 
-    this.handleDelete = elRef => () => {
-      this[elRef].className = "hidden";
+    this.handleDelete = item => {
+      this.setState({
+        items: this.state.items.filter(_item => _item !== item)
+      });
     };
+
+    this.renderItem = (item, i) => (
+      <li key={i}>
+        <button
+          className="btn btn-primary btn-sm"
+          onClick={() => this.handleDelete(item)}
+        >
+          Delete
+        </button>
+        teste{item}
+      </li>
+    );
   }
+
   render() {
     return (
       <div style={styles}>
-        <button className="btn btn-primary" onClick={this.handleClick}>
+        <button className="btn btn-primary" onClick={this.toggleMessage}>
           Show Component
         </button>
-        {this.state.testComponentVisible && <TestComponent />}
+        {this.state.showMessage && <Message />}
         <div>
-          <ul>
-            {[1, 2, 3, 4].map(number => (
-              <li ref={node => (this[`post-${number}`] = node)} key={number}>
-                <button
-                  className="btn btn-primary btn-sm"
-                  onClick={this.handleDelete(`post-${number}`)}
-                >
-                  Delete
-                </button>
-                {` teste${number}`}
-              </li>
-            ))}
-          </ul>
+          <ul>{this.state.items.map(this.renderItem)}</ul>
         </div>
       </div>
     );
